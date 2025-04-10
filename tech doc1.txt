@@ -1,0 +1,92 @@
+Program Overview
+The program is designed to manage a menu screen within a CICS (Customer Information Control System) environment. It handles user interactions, processes input, and navigates between different screens based on user choices. The program is structured into several sections, each responsible for specific tasks.
+
+Identification Division
+This section identifies the program and specifies its name. It includes the program ID and a brief description of the program's purpose.
+
+Data Division
+The Data Division contains all the data items used in the program. It is divided into the Working-Storage Section, which defines temporary storage for data items.
+
+Working-Storage Section
+This section defines various data items that the program will use during its execution. These data items include:
+
+WS-COMM: A communication area for passing data between programs.
+WS-ABSTIME: A field for storing the absolute time in a packed decimal format.
+WS-DATE: A field for storing the formatted date.
+WS-TIME: A field for storing the formatted time.
+WS-RESP: A field for storing response codes.
+WS-LENGTH: A field for storing the length of data.
+The section also includes copy statements to include predefined sets of code from external copybooks, such as A11MPS2, DFHBMSCA, and DFHAID.
+
+Procedure Division
+The Procedure Division contains the executable instructions of the program. It is divided into several key sections:
+
+Main Process
+The main processing section of the program starts here. It evaluates the value of EIBCALEN to determine the initial state of the transaction. Based on this value, different actions are performed:
+
+If EIBCALEN is 0, the program initializes the screen with default values, sends the initial map, and returns control to the program.
+If EIBCALEN is 6, the program receives the map from the screen and processes the user input.
+Send Map Paragraph
+This paragraph sends a map to the screen. It performs the following actions:
+
+Retrieves the current system time using the ASKTIME command and stores it in WS-ABSTIME.
+Formats the retrieved time into a readable date and time format using the FORMATTIME command and stores the formatted values in WS-DATE and WS-TIME.
+Moves the formatted date and time to the output fields DATEO and TIMEO.
+Sends the map MENUMAP from the mapset A11MPS2 to the screen and erases the screen.
+Return Program Paragraph
+This paragraph returns control to the program. It performs the following actions:
+
+Returns control to the transaction A114 with the communication area WS-COMM and the length WS-LENGTH.
+Receive Map Paragraph
+This paragraph receives a map from the screen. It performs the following actions:
+
+Receives the map MENUMAP from the mapset A11MPS2 and stores the response in WS-RESP.
+Evaluates the response received and performs different actions based on the response value:
+If the response is normal, it performs the key check paragraph.
+If the response indicates a map failure, it prompts the user to enter a valid choice and sends the map again.
+If the response indicates a length error, it displays an invalid length message and returns control to the program.
+Key Check Paragraph
+This paragraph checks which key was pressed by the user and performs corresponding actions:
+
+If the Enter key was pressed, it performs the validation paragraph.
+If the PF3 key was pressed, it performs the exit paragraph.
+If the PF5 key was pressed, it performs the clear paragraph.
+If the PF1 key was pressed, it performs the help paragraph.
+For any other key, it performs the invalid function paragraph.
+Exit Paragraph
+This paragraph handles the exit process. It performs the following actions:
+
+Clears the screen and displays a thank you message.
+Sends the map and returns control to the program.
+Clear Paragraph
+This paragraph handles the clear process. It performs the following actions:
+
+Clears the screen and prompts the user to enter a valid choice.
+Sends the map and returns control to the program.
+Help Paragraph
+This paragraph handles the help process. It performs the following actions:
+
+Clears the screen and displays a message indicating that help is not available.
+Sends the map and returns control to the program.
+Invalid Function Paragraph
+This paragraph handles invalid function presses. It performs the following actions:
+
+Clears the screen and prompts the user to enter a valid choice.
+Sends the map and returns control to the program.
+Validation Paragraph
+This paragraph validates the user's choice and navigates to other screens based on the choice. It performs the following actions:
+
+Checks if the user's choice is greater than 0.
+Evaluates the user's choice and performs the corresponding actions:
+If the choice is 1, it transfers control to program A11PGM3.
+If the choice is 2, it transfers control to program A11PGM1.
+If the choice is 3, it transfers control to program A11PGM5.
+If the choice is 4, it transfers control to program A11PGM2.
+For any other choice, it displays an invalid choice message and prompts the user to enter a valid choice.
+Sends the map and returns control to the program.
+Return Map Paragraph
+This paragraph returns control to the program. It performs the following actions:
+
+Returns control to the program.
+Summary
+In summary, the program is designed to manage a menu screen in a CICS environment, handling user interactions, processing input, and navigating between different screens based on user choices. It includes functionalities for initialization, time management, user interaction, response handling, key press evaluation, validation, navigation, and error handling to ensure a seamless and efficient user experience.
